@@ -1,6 +1,6 @@
 """
-Created on: Thu 26 May 2020
-Author: Preeti 
+Creado el: jueves 26 de mayo del 2020.
+Autor: Preeti 
 """
 
 from selenium import webdriver
@@ -9,10 +9,10 @@ from bs4 import BeautifulSoup
 import time
 import pandas as pd
 
-# WIKIPEDIA Bright STARS DATA URL
+# URL DE LOS DATOS DE WIKIPEDIA SOBRE LAS ESTRELLAS.
 START_URL = "https://en.wikipedia.org/wiki/List_of_brightest_stars_and_other_record_stars"
 
-# Webdriver
+# Controlador web.
 browser = webdriver.Chrome("D:/Setup/chromedriver_win32/chromedriver.exe")
 browser.get(START_URL)
 
@@ -21,26 +21,26 @@ time.sleep(10)
 scarped_data = []
 
 
-# Define Data Scrapping Method
+# Definir el método para la extracicón de datos.
 def scrape():
                
-        # BeautifulSoup Object     
+        # Objeto BeautifulSoup.     
         soup = BeautifulSoup(browser.page_source, "html.parser")
 
-        # VERY IMP: The class "wikitable" and <tr> data is at the time of creation of this code. 
-        # This may be updated in future as page is maintained by Wikipedia. 
-        # Understand the page structure as discussed in the class & perform Web Scraping from scratch.
+        # MUY IMPORTANTE: la clase "wikitable" y los datos <tr> son válidos al momento de la creación de este código. 
+        # Esto puede actualizarse en el futuro, ya que la página es mantenida por Wikipedia. 
+        # Comprende la estructura de la página como se discutió en la clase y realiza ‘Web Scraping’ desde cero.
 
-        # Find <table>
+        # Encontrar <table>.
         bright_star_table = soup.find("table", attrs={"class", "wikitable"})
         
-        # Find <tbody>
+        # Encontrar <tbody>.
         table_body = bright_star_table.find('tbody')
 
-        # Find <tr>
+        # Encontrar <tr>.
         table_rows = table_body.find_all('tr')
 
-        # Get data from <td>
+        # Obtener datos de <td>.
         for row in table_rows:
             table_cols = row.find_all('td')
             # print(table_cols)
@@ -48,26 +48,26 @@ def scrape():
             temp_list = []
 
             for col_data in table_cols:
-                # Print Only colums textual data using ".text" property
+                # Imprimir solo columnas de texto usando la propiedad ".text".
                 # print(col_data.text)
 
-                # Remove Extra white spaces using strip() method
+                # Eliminar los espacios en blanco adicionales usando el método strip().
                 data = col_data.text.strip()
                 # print(data)
 
                 temp_list.append(data)
 
-            # Append data to star_data list
+            # Agregar los datos a la lista star_data.
             scarped_data.append(temp_list)
 
 
        
-# Calling Method    
+# Llamar al método.    
 scrape()
 
 ################################################################
 
-# IMPORT DATA to CSV
+# Importar datos a un CSV.
 
 stars_data = []
 
@@ -86,11 +86,11 @@ for i in range(0,len(scarped_data)):
 print(stars_data)
 
 
-# Define Header
+# Definir el encabezado.
 headers = ['Star_name','Distance','Mass','Radius','Luminosity']  
 
-# Define pandas DataFrame   
+# Definir el DataFrame  de pandas.   
 star_df_1 = pd.DataFrame(stars_data, columns=headers)
 
-#Convert to CSV
+#Convertir a CSV.
 star_df_1.to_csv('scraped_data.csv',index=True, index_label="id")
